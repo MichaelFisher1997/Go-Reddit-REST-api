@@ -1,8 +1,11 @@
 // https://go.dev/doc/tutorial/web-service-gin
+
+// functions need breakling up to reusable functions!!
 package main
 
 import (
 	"context"
+	p "entenchef/web-service-gin/pages"
 	"net/http"
 	"strings"
 
@@ -27,7 +30,9 @@ func redisSearchTitle(c *gin.Context) {
 
 	errOut := client.Do(ctx, radix.Cmd(&res, "JSON.GET", query))
 	println(errOut)
-	c.IndentedJSON(http.StatusOK, res)
+	println(res)
+	//echo json
+	c.JSON(http.StatusOK, res)
 
 }
 
@@ -45,6 +50,7 @@ func redisSearchWord(c *gin.Context) {
 	var res []string
 	errOut := client.Do(ctx, radix.Cmd(&res, "KEYS", word))
 	println(errOut)
+
 	c.IndentedJSON(http.StatusOK, res)
 
 }
@@ -54,7 +60,9 @@ func main() {
 	router := gin.Default()
 	//gets JSON by title
 	router.GET("/searched/:input", redisSearchTitle)
-	//
+	//searches for word
 	router.GET("/search/:word", redisSearchWord)
+
+	router.GET("/catolog/pizza", p.RedisPizzas)
 	router.Run("localhost:8080")
 }

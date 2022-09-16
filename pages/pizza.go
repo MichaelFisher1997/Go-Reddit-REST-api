@@ -2,6 +2,8 @@ package pizza
 
 import (
 	"context"
+	//"fmt"
+
 	//"encoding/json"
 	"net/http"
 
@@ -10,16 +12,13 @@ import (
 	"github.com/mediocregopher/radix/v4"
 )
 
-func Quotes(naked string) string {
-	naked = "\"" + naked + "\""
-	return naked
-}
+// --------
 
-//--------
+//---------
 
 func JSONArray(res []string) []string {
 	//array to return
-	var out []string
+	out := []string{}
 	ctx := context.Background()
 
 	//redis connection
@@ -31,12 +30,21 @@ func JSONArray(res []string) []string {
 
 	//append each json to array
 	for i := 0; i < len(res); i++ {
-		var temp string = Quotes(res[i])
 		var hold string //to append
-		println(temp)
-		println(hold)
-		client.Do(ctx, radix.Cmd(&hold, "JSON.GET", temp))
+		_er := client.Do(ctx, radix.Cmd(&hold, "JSON.GET", res[i]))
+		if _er != nil {
+			println(_er)
+		}
+		/*
+			convert hold to json format and out change to a form of array that holds json
+
+
+		*/
+
+		out = append(out, hold)
+		println(hold, "\n")
 	}
+
 	return out
 
 	//client.Do(ctx, radix.Cmd(&temp, "KEYS", get))
